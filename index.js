@@ -28,6 +28,7 @@ micInputStream.on('pauseComplete', () => {
 })
 micInstance.start()
 
+
 const textStream = micInputStream.pipe(
 	speechToText.createRecognizeStream({
 		content_type: 'audio/l16; rate=44100; channels=2',
@@ -42,15 +43,17 @@ textStream.on('data', (spokenText) => {
 
 	conversation.message({
 		workspace_id: config.ConWorkspace,
-		input: { 'text': userSpeech },
+		input: { 'text': spokenText },
 		context: context
 	}, (err, response) => {
 		context = response.context
-		watsonResponse =  response.output.text[0]
+		watsonResponse = response.output.text[0]
 		
-		taskSwitch(context)
-
-		speak(watsonResponse)
+		if (typeof watsonResponse !== 'undefined') {
+			taskSwitch(context)
+			
+			speak(watsonResponse)
+		}
 	})
 })
 
