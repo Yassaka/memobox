@@ -2,16 +2,16 @@
   "name": "memobox",
   "version": "1.0.0",
   "description": "MemoBox.",
-  "main": "run.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node run.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:boxcarton/tjbot-raspberrypi-nodejs.git"
+    "url": "git@github.com:murilobast/memobox.git"
   },
-  "author": "Josh Zheng",
+  "author": "Memo Box",
   "dependencies": {
     "mic": "^2.1.1",
     "node-fetch": "^1.6.3",
