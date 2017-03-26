@@ -3,6 +3,7 @@ const fs = require('fs')
 const probe = require('node-ffprobe')
 const exec = require('child_process').exec
 const mic = require('mic')
+const TJBot = require('tjbot')
 // Local imports
 const config = require('./config.js')
 const conversation = require('./lib/conversation')
@@ -10,12 +11,28 @@ const speechToText = require('./lib/stt')
 const textToSpeech = require('./lib/tts')
 const taskSwitch = require('./lib/taskSwitch')
 
+const hardware = ['led', 'servo', 'microphone', 'speaker']
 const micParams = {
 	rate: 44100,
 	channels: 2,
 	debug: false,
 	exitOnSilence: 6
 }
+const credentials = {}
+const configuration = {
+    verboseLogging: true,
+    robot: {
+        gender: 'female'
+    },
+    listen: {
+        language: 'pt-BR'
+    },
+    speak: {
+        language: 'pt-BR'
+    },
+    name: 'Memo Box'
+}
+const tj = new TJBot(hardware, configuration, credentials)
 let pauseDuration = 1
 const micInstance = mic(micParams)
 const micInputStream = micInstance.getAudioStream()
@@ -43,9 +60,10 @@ textStream.on('data', (spokenText) => {
 
 	conversation.message({
 		workspace_id: config.ConWorkspace,
-		input: { 'text': spokenText },
+		input: { 'text': userSpeech },
 		context: context
 	}, (err, response) => {
+		tj.shine('orange')
 		context = response.context
 		watsonResponse = response.output.text[0]
 		
@@ -70,6 +88,8 @@ const speak = (text) => {
 
 		probe('output.wav', (err, probeData) => {
 			if (!err && typeof probeData !== 'undefined') {
+				tj.wave()
+				tj.shine('green')
 				pauseDuration = probeData.format.duration + .5
 				micInstance.pause()
 				exec('play output.wav', (error, stdout, stderr) => {
