@@ -1,8 +1,8 @@
 const watson = require('watson-developer-cloud');
 const config = require('./config.js')
+const exec = require('child_process').exec;
 const fs = require('fs');
 const mic = require('mic');
-const player = require('play-sound')(opts = {})
 const probe = require('node-ffprobe');
 
 const attentionWord = config.attentionWord;
@@ -88,6 +88,7 @@ const getEmotion = (text) => {
   })
 };
 
+
 /******************************************************************************
 * Text To Speech
 *******************************************************************************/
@@ -96,16 +97,20 @@ const speakResponse = (text) => {
     text: text,
     voice: config.voice,
     accept: 'audio/wav'
-  };
+  }
   textToSpeech.synthesize(params)
   .pipe(fs.createWriteStream('output.wav'))
   .on('close', () => {
-    probe('output.wav', function(err, probeData) {
-      pauseDuration = probeData.format.duration + 0.2;
-      micInstance.pause();
-      player.play('output.wav');
-    });
-  });
+    probe('output.wav', (err, probeData) => {
+      pauseDuration = probeData.format.duration + 1
+      micInstance.pause()
+      exec('play output.wav', (error, stdout, stderr) => {
+        if (error !== null) {
+          console.log('exec error: ' + error)
+        }
+      })
+    })
+  })
 }
 
 /******************************************************************************
@@ -135,7 +140,7 @@ textStream.on('data', (user_speech_text) => {
         watson_response =  response.output.text[0];
         speakResponse(watson_response);
         console.log('Watson says:', watson_response);
-        if(context.system.dialog_turn_counter == 2) {
+        if (context.system.dialog_turn_counter == 2) {
           context = {};
           start_dialog = false;
         }

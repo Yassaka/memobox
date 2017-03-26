@@ -1,4 +1,4 @@
-exports.attentionWord ='bela';
+exports.attentionWord ='Memo Box';
 
 exports.voice = 'pt-BR_IsabelaVoice';
 
