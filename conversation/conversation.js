@@ -37,7 +37,8 @@ var tjConfig = {
     },
     speak: {
         language: 'pt-BR'
-    }
+    },
+    name: 'Memo Box'
 };
 
 // instantiate our TJBot!
